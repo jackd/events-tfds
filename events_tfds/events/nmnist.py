@@ -1,7 +1,7 @@
 import os
 import tensorflow as tf
 import tensorflow_datasets as tfds
-from events_tfds.events import utils
+from events_tfds.data_io.neuro import load_neuro_events
 
 CITATION = """\
 @article{orchard2015converting,
@@ -75,7 +75,7 @@ class NMNIST(tfds.core.GeneratorBasedBuilder):
                 continue
             _, label, filename = path.split('/')
             example_id = int(filename[:-4])
-            time, coords, polarity = utils.load_neuro_events(fobj)
+            time, coords, polarity = load_neuro_events(fobj)
             features = dict(events=dict(time=time,
                                         coords=coords,
                                         polarity=polarity),
@@ -85,14 +85,16 @@ class NMNIST(tfds.core.GeneratorBasedBuilder):
 
 
 if __name__ == '__main__':
-    dl_config = None
+    from events_tfds.vis.image import as_frames
+    from events_tfds.vis.anim import animate_frames
+    download_config = None
     # download_config=tfds.core.download.DownloadConfig(
     #         register_checksums=True)
-    NMNIST().download_and_prepare(download_config=dl_config)
+    NMNIST().download_and_prepare(download_config=download_config)
 
     for events, labels in tfds.load('nmnist', split='train',
                                     as_supervised=True):
-        frames = utils.as_frames(**{k: v.numpy() for k, v in events.items()},
-                                 num_frames=20)
+        frames = as_frames(**{k: v.numpy() for k, v in events.items()},
+                           num_frames=20)
         print(labels.numpy())
-        utils.animate_frames(frames, fps=4)
+        animate_frames(frames, fps=4)
