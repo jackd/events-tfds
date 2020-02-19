@@ -5,7 +5,8 @@ GREEN = np.array(((0, 255, 0)), dtype=np.uint8)
 WHITE = np.array(((255, 255, 255)), dtype=np.uint8)
 
 
-def as_frames(coords, time, polarity=None, dt=None, num_frames=None):
+def as_frames(coords, time, polarity=None, dt=None, num_frames=None,
+              shape=None):
     if time.size == 0:
         raise ValueError('time must not be empty')
     t_start = time[0]
@@ -15,16 +16,18 @@ def as_frames(coords, time, polarity=None, dt=None, num_frames=None):
     else:
         num_frames = (t_end - t_start) // dt + 1
 
-    shape = np.max(coords, axis=0)[-1::-1] + 1
+    if shape is None:
+        shape = np.max(coords, axis=0)[-1::-1] + 1
     frame_data = np.zeros((num_frames, *shape, 3), dtype=np.uint8)
     if polarity is None:
         colors = WHITE
     else:
         colors = np.where(polarity[:, np.newaxis], RED, GREEN)
-    i = (time - t_start) // dt
+    i = np.minimum((time - t_start) // dt, num_frames - 1)
     # fi = np.concatenate((i[:, np.newaxis], coords), axis=-1)
     x, y = coords.T
-    frame_data[(i, shape[0] - y - 1, x)] = colors
+    # frame_data[(i, shape[0] - y - 1, x)] = colors
+    frame_data[(i, y, x)] = colors
 
     return frame_data
 

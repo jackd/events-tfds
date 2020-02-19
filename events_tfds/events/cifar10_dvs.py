@@ -2,17 +2,12 @@ import os
 import numpy as np
 import tensorflow as tf
 import tensorflow_datasets as tfds
-import events_tfds.data_io.aedat as aedat
+from events_tfds.data_io import dvs
 
 CITATION = """\
-@article{orchard2015converting,
-  title={Converting static image datasets to spiking neuromorphic datasets using saccades},
-  author={Orchard, Garrick and Jayawant, Ajinkya and Cohen, Gregory K and Thakor, Nitish},
-  journal={Frontiers in neuroscience},
-  volume={9},
-  pages={437},
-  year={2015},
-  publisher={Frontiers}
+@article{chang128,
+  title={A 128 128 1.5% Contrast Sensitivity 0.9% FPN 3 $\\mu$s Latency 4 mW Asynchronous Frame-Free Dynamic Vision Sensor Using Transimpedance Preamplifiers, T. Serrano-Gotarredona and B. Linares-Barranco 827 A 3 Megapixel 100 Fps 2.8 m Pixel Pitch CMOS Image Sensor Layer With Built-in Self-Test for 3D Integrated},
+  author={Chang, MF and Shen, SJ and Liu, CC and Wu, CW and Lin, YF and King, YC and Lin, CJ and Liao, HJ and Chih, YD and Yamauchi, H}
 }"""
 
 HOMEPAGE = 'https://figshare.com/articles/CIFAR10-DVS_New/4724671/2'
@@ -34,19 +29,6 @@ CLASSES = (
 )
 
 assert (len(CLASSES) == NUM_CLASSES)
-
-
-def load_events(fp):
-    return aedat.load_events(fp,
-                             bytes_trim=0,
-                             bytes_skip=0,
-                             x_mask=0xfE,
-                             x_shift=1,
-                             y_mask=0x7f00,
-                             y_shift=8,
-                             polarity_mask=1,
-                             polarity_shift=None,
-                             times_first=False)
 
 
 class Cifar10DVS(tfds.core.GeneratorBasedBuilder):
@@ -114,7 +96,7 @@ class Cifar10DVS(tfds.core.GeneratorBasedBuilder):
                 path = os.path.join(folder, filename)
                 example_id = int(filename.split('_')[-1][:-6])
                 with open(path, 'rb') as fp:
-                    time, x, y, polarity = load_events(fp)
+                    time, x, y, polarity = dvs.load_events(fp)
                 coords = np.stack((x, y), axis=-1)
                 features = dict(events=dict(time=time.astype(np.int64),
                                             coords=coords.astype(np.int64),
@@ -135,7 +117,7 @@ if __name__ == '__main__':
     from events_tfds.vis.anim import animate_frames
     # path = '/tmp/cifar10_ship_999.aedat'
     # with open(path, 'rb') as fp:
-    #     time, x, y, polarity = load_events(fp)
+    #     time, x, y, polarity = dvs.load_events(fp)
     # coords = np.stack((x, y), axis=-1)
     # print(time[:100])
     # print(coords.shape)
@@ -156,4 +138,5 @@ if __name__ == '__main__':
         frames = as_frames(**{k: v.numpy() for k, v in events.items()},
                            num_frames=20)
         print(labels.numpy())
+        print(tf.reduce_max(events['coords'], axis=0).numpy())
         animate_frames(frames, fps=4)

@@ -1,0 +1,1 @@
+http://www2.imse-cnm.csic.es/caviar/MNIST_FLASH_DVS/Recordings_aedat_zip/Recordings_aedat.zip.001 1048576000 a911ba6c1587ba8886bc98569332c20ebfe554e76bc3e3f3c740a92b92376dc8

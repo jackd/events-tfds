@@ -18,6 +18,8 @@ HOMEPAGE = 'https://www.garrickorchard.com/datasets/n-mnist'
 DL_URL = 'https://www.dropbox.com/sh/tg2ljlbmtzygrag/AABrCc6FewNZSNsoObWJqY74a?dl=1'
 NUM_CLASSES = 10
 
+GRID_SHAPE = (34, 34)
+
 
 class NMNIST(tfds.core.GeneratorBasedBuilder):
 
@@ -85,12 +87,12 @@ class NMNIST(tfds.core.GeneratorBasedBuilder):
 
 
 if __name__ == '__main__':
+    download_config = None
+    # download_config = tfds.core.download.DownloadConfig(
+    #     register_checksums=True)
+    NMNIST().download_and_prepare(download_config=download_config)
     from events_tfds.vis.image import as_frames
     from events_tfds.vis.anim import animate_frames
-    download_config = None
-    # download_config=tfds.core.download.DownloadConfig(
-    #         register_checksums=True)
-    NMNIST().download_and_prepare(download_config=download_config)
 
     for events, labels in tfds.load('nmnist', split='train',
                                     as_supervised=True):

@@ -1,0 +1,10 @@
+http://www2.imse-cnm.csic.es/caviar/MNIST_DVS/grabbed_data0.zip 790469447 4263ec792b86015b52533d0a34970b7d0fbf26d3245e5a705515021050165b65
+http://www2.imse-cnm.csic.es/caviar/MNIST_DVS/grabbed_data1.zip 456285815 aad599ba4c96c9ed4484adaf4c0a49138d87a7ff4b1ff759f999f46b04ecf620
+http://www2.imse-cnm.csic.es/caviar/MNIST_DVS/grabbed_data2.zip 579069198 872089b93263c7cf9a7f5d105df4bccf00b7c600a7c7ee960f453559e4718e36
+http://www2.imse-cnm.csic.es/caviar/MNIST_DVS/grabbed_data3.zip 555396246 82b120d031af135b3006d17c07a861508bb2c98e3919d41d2556fd20f6dbe7c7
+http://www2.imse-cnm.csic.es/caviar/MNIST_DVS/grabbed_data4.zip 491628272 4e0f87859743233e0f587f963c7a05931cf61cd4f26b647abf02794a4651673c
+http://www2.imse-cnm.csic.es/caviar/MNIST_DVS/grabbed_data5.zip 636477424 d11345b2d282367f2836e9ba94fe1bfd3bbc707094d15298364bf9c905ed43b3
+http://www2.imse-cnm.csic.es/caviar/MNIST_DVS/grabbed_data6.zip 520197908 9144d1f80d6e5e2ddd5ebcc5e98ea33b50974c54776ecd800dcd86b06196ed3d
+http://www2.imse-cnm.csic.es/caviar/MNIST_DVS/grabbed_data7.zip 633912358 b498053366b6b6ab979ac3dedbbc4417041e203569ecac8287cf018e9836ce67
+http://www2.imse-cnm.csic.es/caviar/MNIST_DVS/grabbed_data8.zip 802631746 dbce305d64f9f2bda87dae58966289e0070102f56ef1506b2f5c27f9e86b947d
+http://www2.imse-cnm.csic.es/caviar/MNIST_DVS/grabbed_data9.zip 739912195 c9d9087a1db0b4e4af1904b3481c8d9bdc8fb6b4ea757d51d4b0c6341b8dd280
