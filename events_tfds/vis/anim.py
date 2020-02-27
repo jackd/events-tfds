@@ -32,6 +32,8 @@ def animate_frames(img_data, fps=30, save_path=None):
 
 
 def animate_frames_multi(*img_data, fps=30, save_path=None, ax_shape=None):
+    if len(img_data) == 1:
+        return animate_frames(img_data[0], fps=fps, save_path=save_path)
     if ax_shape is None:
         ax_shape = (1, len(img_data))
     fig, ax = plt.subplots(*ax_shape)

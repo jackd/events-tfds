@@ -29,6 +29,9 @@ CLASSES = (
     "o",
 )
 
+NUM_CLASSES = len(CLASSES)
+NUM_CHANNELS = 64
+
 GENDERS = (
     "man",
     "woman",

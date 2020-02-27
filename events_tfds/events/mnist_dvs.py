@@ -13,6 +13,7 @@ CITATION = """\
 HOMEPAGE = 'http://www2.imse-cnm.csic.es/caviar/MNISTDVS.html'
 DL_URL = 'http://www2.imse-cnm.csic.es/caviar/MNIST_DVS/grabbed_data{}.zip'
 NUM_CLASSES = 10
+GRID_SHAPE = (128, 128)
 
 
 class MnistDvsConfig(tfds.core.BuilderConfig):
@@ -100,13 +101,14 @@ if __name__ == '__main__':
     from events_tfds.vis.anim import animate_frames
     download_config = None
     # download_config = tfds.core.download.DownloadConfig(register_checksums=True)
-    MnistDVS().download_and_prepare(download_config=download_config)
+    builder = MnistDVS(config=SCALE16)
+    builder.download_and_prepare(download_config=download_config)
 
-    for events, labels in tfds.load('mnist_dvs',
-                                    split='train',
-                                    as_supervised=True):
+    for events, labels in builder.as_dataset(split='train', as_supervised=True):
         frames = as_frames(**{k: v.numpy() for k, v in events.items()},
-                           num_frames=20)
+                           num_frames=40)
         print(labels.numpy())
-        print(tf.reduce_max(events['coords'], axis=0).numpy())
-        animate_frames(frames, fps=4)
+        print(tf.reduce_max(events['coords'], axis=0).numpy() + 1)
+        time = events['time'].numpy()
+        print(f'{time.shape[0]} events over {time[-1] - time[0]} dt')
+        animate_frames(frames, fps=8)

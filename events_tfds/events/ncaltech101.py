@@ -19,6 +19,8 @@ DL_URL = "https://www.dropbox.com/sh/iuv7o3h2gv6g4vd/AADYPdhIBK7g_fPCLKmG6aVpa?d
 NUM_CLASSES = 101
 NAMES_FILE = os.path.join(os.path.dirname(__file__), 'caltech101_labels.txt')
 
+GRID_SHAPE = (234, 174)
+
 
 class Ncaltech101(tfds.core.GeneratorBasedBuilder):
 
@@ -85,11 +87,19 @@ if __name__ == '__main__':
     dl_config = None
     # download_config=tfds.core.download.DownloadConfig(
     #         register_checksums=True)
-    Ncaltech101().download_and_prepare(download_config=dl_config)
+    builder = Ncaltech101()
+    builder.download_and_prepare(download_config=dl_config)
+    splits = builder.info.splits
+    class_names = builder.info.features['label'].names
 
-    for events, labels in tfds.load('nmnist', split='train',
-                                    as_supervised=True):
+    for k in sorted(splits):
+        print(f'{k}: {splits[k].num_examples}')
+
+    for events, labels in builder.as_dataset(split='train', as_supervised=True):
         frames = as_frames(**{k: v.numpy() for k, v in events.items()},
                            num_frames=20)
-        print(labels.numpy())
+        t = events['time'].numpy()
+        print(f'{t.size} events over {t[-1] - t[0]} dt')
+        print(class_names[labels.numpy()])
+        print(tf.reduce_max(events['coords'], axis=0).numpy() + 1)
         animate_frames(frames, fps=4)

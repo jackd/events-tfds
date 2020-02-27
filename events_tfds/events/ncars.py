@@ -147,6 +147,8 @@ if __name__ == '__main__':
         coords = events['coords'].numpy()
         print(len(coords))
         print(np.min(coords, axis=0), np.max(coords, axis=0) + 1)
+        t = events['time'].numpy()
+        print('t extends: ', np.min(t), np.max(t))
         frame = as_frame(
             coords=coords,
             # time=events['time'],

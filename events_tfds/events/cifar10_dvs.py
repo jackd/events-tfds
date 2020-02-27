@@ -14,6 +14,7 @@ HOMEPAGE = 'https://figshare.com/articles/CIFAR10-DVS_New/4724671/2'
 DL_URL = 'https://www.dropbox.com/sh/tg2ljlbmtzygrag/AABrCc6FewNZSNsoObWJqY74a?dl=1'
 
 NUM_CLASSES = 10
+GRID_SHAPE = (128, 128)
 
 CLASSES = (
     'airplane',
