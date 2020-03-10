@@ -90,13 +90,15 @@ if __name__ == '__main__':
     download_config = None
     # download_config = tfds.core.download.DownloadConfig(
     #     register_checksums=True)
-    NMNIST().download_and_prepare(download_config=download_config)
+    builder = NMNIST()
+    builder.download_and_prepare(download_config=download_config)
     from events_tfds.vis.image import as_frames
     from events_tfds.vis.anim import animate_frames
 
-    for events, labels in tfds.load('nmnist', split='train',
-                                    as_supervised=True):
+    for events, labels in builder.as_dataset(split='train', as_supervised=True):
         frames = as_frames(**{k: v.numpy() for k, v in events.items()},
                            num_frames=20)
         print(labels.numpy())
+        t = events['time'].numpy()
+        print(t[-1] - t[0], len(t))
         animate_frames(frames, fps=4)

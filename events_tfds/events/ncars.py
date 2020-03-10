@@ -22,6 +22,8 @@ CAR = 'car'
 CLASSES = (BACKGROUND, CAR)
 NUM_CLASSES = 2
 
+GRID_SHAPE = (120, 100)  # all(?) are smaller, though these are the max values
+
 
 def read_bits(arr, mask=None, shift=None):
     if mask is not None:
@@ -136,15 +138,19 @@ if __name__ == '__main__':
     download_config = None
     # download_config = tfds.core.download.DownloadConfig(
     #     register_checksums=True)
-    Ncars().download_and_prepare(download_config=download_config)
+    builder = Ncars()
+    builder.download_and_prepare(download_config=download_config)
 
-    # from events_tfds.vis.anim import animate_frames
     import matplotlib.pyplot as plt
     from events_tfds.vis.image import as_frame
 
-    for events, labels in tfds.load('ncars', split='train', as_supervised=True):
+    for split in builder.info.splits:
+        print(split, builder.info.splits[split].num_examples)
+
+    for events, labels in builder.as_dataset(split='test', as_supervised=True):
         print(CLASSES[labels.numpy()])
         coords = events['coords'].numpy()
+
         print(len(coords))
         print(np.min(coords, axis=0), np.max(coords, axis=0) + 1)
         t = events['time'].numpy()
@@ -156,3 +162,14 @@ if __name__ == '__main__':
         )
         plt.imshow(frame)
         plt.show()
+
+    # max_x = 0
+    # max_y = 0
+
+    # for events, labels in builder.as_dataset(split='train', as_supervised=True):
+    #     # print(CLASSES[labels.numpy()])
+    #     coords = events['coords'].numpy()
+    #     x, y = np.max(coords, axis=0)
+    #     max_x = max(max_x, x)
+    #     max_y = max(max_y, y)
+    # print(max_x, max_y)

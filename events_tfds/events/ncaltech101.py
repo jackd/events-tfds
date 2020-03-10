@@ -16,7 +16,7 @@ CITATION = """\
 
 HOMEPAGE = 'https://www.garrickorchard.com/datasets/n-caltech101'
 DL_URL = "https://www.dropbox.com/sh/iuv7o3h2gv6g4vd/AADYPdhIBK7g_fPCLKmG6aVpa?dl=1"
-NUM_CLASSES = 101
+NUM_CLASSES = 102
 NAMES_FILE = os.path.join(os.path.dirname(__file__), 'caltech101_labels.txt')
 
 GRID_SHAPE = (234, 174)

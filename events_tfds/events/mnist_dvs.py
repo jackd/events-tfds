@@ -5,9 +5,15 @@ import tensorflow_datasets as tfds
 from events_tfds.data_io import dvs
 
 CITATION = """\
-@article{chang128,
-  title={A 128 128 1.5% Contrast Sensitivity 0.9% FPN 3 $\\mu$s Latency 4 mW Asynchronous Frame-Free Dynamic Vision Sensor Using Transimpedance Preamplifiers, T. Serrano-Gotarredona and B. Linares-Barranco 827 A 3 Megapixel 100 Fps 2.8 m Pixel Pitch CMOS Image Sensor Layer With Built-in Self-Test for 3D Integrated},
-  author={Chang, MF and Shen, SJ and Liu, CC and Wu, CW and Lin, YF and King, YC and Lin, CJ and Liao, HJ and Chih, YD and Yamauchi, H}
+@article{serrano2013128,
+  title={A 128 $times$ 128 1.5\% Contrast Sensitivity 0.9\% FPN 3 $\mu$s Latency 4 mW Asynchronous Frame-Free Dynamic Vision Sensor Using Transimpedance Preamplifiers},
+  author={Serrano-Gotarredona, Teresa and Linares-Barranco, Bernab{\'e}},
+  journal={IEEE Journal of Solid-State Circuits},
+  volume={48},
+  number={3},
+  pages={827--838},
+  year={2013},
+  publisher={IEEE}
 }"""
 
 HOMEPAGE = 'http://www2.imse-cnm.csic.es/caviar/MNISTDVS.html'
