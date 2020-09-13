@@ -104,6 +104,8 @@ class Cifar10DVS(tfds.core.GeneratorBasedBuilder):
                 example_id = int(filename.split('_')[-1][:-6])
                 with open(path, 'rb') as fp:
                     time, x, y, polarity = dvs.load_events(fp)
+                    x = 127 - x
+                    polarity = np.logical_not(polarity)
                 coords = np.stack((x, y), axis=-1)
                 features = dict(events=dict(time=time.astype(np.int64),
                                             coords=coords.astype(np.int64),
