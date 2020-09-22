@@ -1,5 +1,5 @@
-import matplotlib.pyplot as plt
 import matplotlib.animation as animation
+import matplotlib.pyplot as plt
 
 
 def _save_or_show(anim, save_path):
@@ -16,7 +16,7 @@ def animate_frames(img_data, fps=30, save_path=None):
 
     def animate(i):
         im.set_data(img_data[i])
-        return im,
+        return (im,)
 
     def init():
         return animate(0)
@@ -49,10 +49,8 @@ def animate_frames_multi(*img_data, fps=30, save_path=None, ax_shape=None):
     def init():
         return animate(0)
 
-    anim = animation.FuncAnimation(fig,
-                                   animate,
-                                   init_func=init,
-                                   frames=img_data[0].shape[0],
-                                   interval=1000 // fps)
+    anim = animation.FuncAnimation(
+        fig, animate, init_func=init, frames=img_data[0].shape[0], interval=1000 // fps
+    )
 
     _save_or_show(anim, save_path)

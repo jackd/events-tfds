@@ -1,10 +1,11 @@
+import h5py
 import numpy as np
 import tensorflow as tf
 import tensorflow_datasets as tfds
-import h5py
+
 import events_tfds  # ensures checksums directory is added
 
-CITATION = '''\
+CITATION = """\
 @article{anumula2018feature,
   title={Feature representations for neuromorphic audio spike streams},
   author={Anumula, Jithendar and Neil, Daniel and Delbruck, Tobi and Liu, Shih-Chii},
@@ -13,7 +14,7 @@ CITATION = '''\
   pages={23},
   year={2018},
   publisher={Frontiers}
-}'''
+}"""
 
 CLASSES = (
     "z",
@@ -41,15 +42,16 @@ SAMPLES = ("a", "b")
 
 
 class NtidigitsConfig(tfds.core.BuilderConfig):
-
     def __init__(self, single=True):
         self._single = single
         name = self.name
         super(NtidigitsConfig, self).__init__(
             name=name,
             version=tfds.core.Version("0.0.1"),
-            description='neuro-morphic conversion of tigits spoken dataset ({})'
-            .format(name))
+            description="neuro-morphic conversion of tigits spoken dataset ({})".format(
+                name
+            ),
+        )
 
     @property
     def single(self):
@@ -57,7 +59,7 @@ class NtidigitsConfig(tfds.core.BuilderConfig):
 
     @property
     def name(self):
-        return 'single' if self.single else 'multi'
+        return "single" if self.single else "multi"
 
 
 SINGLE_CONFIG = NtidigitsConfig(single=True)
@@ -74,67 +76,72 @@ class Ntidigits(tfds.core.GeneratorBasedBuilder):
             label = tfds.features.Sequence(label)
         return tfds.core.DatasetInfo(
             builder=self,
-            features=tfds.features.FeaturesDict({
-                "events":
-                    tfds.features.FeaturesDict(
+            features=tfds.features.FeaturesDict(
+                {
+                    "events": tfds.features.FeaturesDict(
                         dict(
-                            time=tfds.features.Tensor(shape=(None,),
-                                                      dtype=tf.float32), # sec
-                            channel=tfds.features.Tensor(shape=(None,),
-                                                         dtype=tf.uint8), # [0, 64)
-                        )),
-                "label":
-                    label,
-                "gender":
-                    tfds.features.ClassLabel(names=GENDERS),
-                "speaker_id":
-                    tfds.features.Text(),
-                "sample":
-                    tfds.features.ClassLabel(names=SAMPLES)
-            }),
+                            time=tfds.features.Tensor(
+                                shape=(None,), dtype=tf.float32
+                            ),  # sec
+                            channel=tfds.features.Tensor(
+                                shape=(None,), dtype=tf.uint8
+                            ),  # [0, 64)
+                        )
+                    ),
+                    "label": label,
+                    "gender": tfds.features.ClassLabel(names=GENDERS),
+                    "speaker_id": tfds.features.Text(),
+                    "sample": tfds.features.ClassLabel(names=SAMPLES),
+                }
+            ),
             supervised_keys=("events", "label"),
-            homepage=
-            "https://docs.google.com/document/d/1Uxe7GsKKXcy6SlDUX4hoJVAC0-UkH-8kr5UXp0Ndi1M/",
-            citation=CITATION)
+            homepage="https://docs.google.com/document/d/1Uxe7GsKKXcy6SlDUX4hoJVAC0-UkH-8kr5UXp0Ndi1M/",
+            citation=CITATION,
+        )
 
     def _split_generators(self, dl_manager):
         path = dl_manager.download(
-            'https://www.dropbox.com/s/vfwwrhlyzkax4a2/n-tidigits.hdf5?dl=1')
+            "https://www.dropbox.com/s/vfwwrhlyzkax4a2/n-tidigits.hdf5?dl=1"
+        )
         return [
-            tfds.core.SplitGenerator(name=split,
-                                     gen_kwargs=dict(path=path, split=split))
-            for split in ('train', 'test')
+            tfds.core.SplitGenerator(
+                name=split, gen_kwargs=dict(path=path, split=split)
+            )
+            for split in ("train", "test")
         ]
 
     def _generate_examples(self, path, split):
         single = self.builder_config.single
 
-        with tf.io.gfile.GFile(path, 'rb') as fp:
-            root = h5py.File(fp, 'r')
-            addresses = root['{}_addresses'.format(split)]
-            timestamps = root['{}_timestamps'.format(split)]
-            labels = root['{}_labels'.format(split)][:]
+        with tf.io.gfile.GFile(path, "rb") as fp:
+            root = h5py.File(fp, "r")
+            addresses = root["{}_addresses".format(split)]
+            timestamps = root["{}_timestamps".format(split)]
+            labels = root["{}_labels".format(split)][:]
             for label_str in labels:
                 label_str = label_str.decode()
-                gender, speaker_id, sample, label = label_str.split('-')
+                gender, speaker_id, sample, label = label_str.split("-")
                 if single:
                     if len(label) > 1:
                         continue
                 else:
                     label = list(label)
 
-                events = dict(time=timestamps[label_str][:],
-                              channel=addresses[label_str][:].astype(np.uint8))
-                yield label_str, dict(gender=gender,
-                                      speaker_id=speaker_id,
-                                      sample=sample,
-                                      label=label,
-                                      events=events)
+                events = dict(
+                    time=timestamps[label_str][:],
+                    channel=addresses[label_str][:].astype(np.uint8),
+                )
+                yield label_str, dict(
+                    gender=gender,
+                    speaker_id=speaker_id,
+                    sample=sample,
+                    label=label,
+                    events=events,
+                )
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     dl_config = None
     # dl_config = tfds.core.download.DownloadConfig(register_checksums=True)
 
-    Ntidigits(config=SINGLE_CONFIG).download_and_prepare(
-        download_config=dl_config)
+    Ntidigits(config=SINGLE_CONFIG).download_and_prepare(download_config=dl_config)

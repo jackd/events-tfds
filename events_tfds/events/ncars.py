@@ -1,7 +1,9 @@
 import os
+
 import numpy as np
 import tensorflow as tf
 import tensorflow_datasets as tfds
+
 import events_tfds  # ensures checksums directory is added
 
 CITATION = """\
@@ -13,11 +15,11 @@ CITATION = """\
   year={2018}
 }"""
 
-HOMEPAGE = 'https://www.prophesee.ai/dataset-n-cars-download/'
-DL_URL = 'http://www.prophesee.ai/resources/Prophesee_Dataset_n_cars.zip'
+HOMEPAGE = "https://www.prophesee.ai/dataset-n-cars-download/"
+DL_URL = "http://www.prophesee.ai/resources/Prophesee_Dataset_n_cars.zip"
 
-BACKGROUND = 'background'
-CAR = 'car'
+BACKGROUND = "background"
+CAR = "car"
 
 CLASSES = (BACKGROUND, CAR)
 NUM_CLASSES = 2
@@ -46,7 +48,7 @@ def load_atis_events(fp):
     p = 0
     lt = fp.readline()
     ltd = lt.decode().strip()
-    while ltd and ltd[0] == '%':
+    while ltd and ltd[0] == "%":
         p += len(lt)
         lt = fp.readline()
         try:
@@ -54,7 +56,7 @@ def load_atis_events(fp):
         except UnicodeDecodeError:
             break
     fp.seek(p + 2)
-    data = np.fromstring(fp.read(), dtype='<u4')
+    data = np.fromstring(fp.read(), dtype="<u4")
 
     time = data[::2]
     coords = data[1::2]
@@ -74,20 +76,21 @@ class Ncars(tfds.core.GeneratorBasedBuilder):
         return tfds.core.DatasetInfo(
             builder=self,
             description="Binary car classification problem.",
-            features=tfds.features.FeaturesDict({
-                "events":  # tfds.features.Sequence(
-                    tfds.features.FeaturesDict(
-                        dict(time=tfds.features.Tensor(shape=(None,),
-                                                       dtype=tf.int64),
-                             coords=tfds.features.Tensor(shape=(None, 2),
-                                                         dtype=tf.int64),
-                             polarity=tfds.features.Tensor(shape=(None,),
-                                                           dtype=tf.bool))),
-                "label":
-                    tfds.features.ClassLabel(names=CLASSES),
-                "example_id":
-                    tfds.features.Tensor(shape=(), dtype=tf.int64)
-            }),
+            features=tfds.features.FeaturesDict(
+                {
+                    "events": tfds.features.FeaturesDict(  # tfds.features.Sequence(
+                        dict(
+                            time=tfds.features.Tensor(shape=(None,), dtype=tf.int64),
+                            coords=tfds.features.Tensor(
+                                shape=(None, 2), dtype=tf.int64
+                            ),
+                            polarity=tfds.features.Tensor(shape=(None,), dtype=tf.bool),
+                        )
+                    ),
+                    "label": tfds.features.ClassLabel(names=CLASSES),
+                    "example_id": tfds.features.Tensor(shape=(), dtype=tf.int64),
+                }
+            ),
             supervised_keys=("events", "label"),
             homepage=HOMEPAGE,
             citation=CITATION,
@@ -97,18 +100,18 @@ class Ncars(tfds.core.GeneratorBasedBuilder):
         """Returns SplitGenerators."""
         # Download the full MNIST Database
         data_folder = dl_manager.download_and_extract(DL_URL)
-        test_dir = dl_manager.extract(
-            os.path.join(data_folder, 'n-cars_test.zip'))
-        train_dir = dl_manager.extract(
-            os.path.join(data_folder, 'n-cars_train.zip'))
+        test_dir = dl_manager.extract(os.path.join(data_folder, "n-cars_test.zip"))
+        train_dir = dl_manager.extract(os.path.join(data_folder, "n-cars_train.zip"))
 
         # MNIST provides TRAIN and TEST splits, not a VALIDATION split, so we only
         # write the TRAIN and TEST splits to disk.
         return [
-            tfds.core.SplitGenerator(name=tfds.Split.TEST,
-                                     gen_kwargs=dict(root_dir=test_dir)),
-            tfds.core.SplitGenerator(name=tfds.Split.TRAIN,
-                                     gen_kwargs=dict(root_dir=train_dir)),
+            tfds.core.SplitGenerator(
+                name=tfds.Split.TEST, gen_kwargs=dict(root_dir=test_dir)
+            ),
+            tfds.core.SplitGenerator(
+                name=tfds.Split.TRAIN, gen_kwargs=dict(root_dir=train_dir)
+            ),
         ]
 
     def _generate_examples(self, root_dir):
@@ -116,25 +119,30 @@ class Ncars(tfds.core.GeneratorBasedBuilder):
         for folder, _, filenames in os.walk(root_dir):
             if len(filenames) > 0:
                 label = os.path.split(folder)[1]
-                if label == 'cars':
+                if label == "cars":
                     label = CAR
                 for filename in filenames:
-                    if not filename.endswith('.dat'):
+                    if not filename.endswith(".dat"):
                         continue
 
                     example_id = int(filename[4:-7])
-                    with tf.io.gfile.GFile(os.path.join(folder, filename),
-                                           'rb') as fobj:
+                    with tf.io.gfile.GFile(
+                        os.path.join(folder, filename), "rb"
+                    ) as fobj:
                         time, coords, polarity = load_atis_events(fobj)
-                    features = dict(events=dict(time=time.astype(np.int64),
-                                                coords=coords.astype(np.int64),
-                                                polarity=polarity),
-                                    label=label,
-                                    example_id=example_id)
+                    features = dict(
+                        events=dict(
+                            time=time.astype(np.int64),
+                            coords=coords.astype(np.int64),
+                            polarity=polarity,
+                        ),
+                        label=label,
+                        example_id=example_id,
+                    )
                     yield (label, example_id), features
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     download_config = None
     # download_config = tfds.core.download.DownloadConfig(
     #     register_checksums=True)
@@ -147,18 +155,18 @@ if __name__ == '__main__':
     for split in builder.info.splits:
         print(split, builder.info.splits[split].num_examples)
 
-    for events, labels in builder.as_dataset(split='test', as_supervised=True):
+    for events, labels in builder.as_dataset(split="test", as_supervised=True):
         print(CLASSES[labels.numpy()])
-        coords = events['coords'].numpy()
+        coords = events["coords"].numpy()
 
         print(len(coords))
         print(np.min(coords, axis=0), np.max(coords, axis=0) + 1)
-        t = events['time'].numpy()
-        print('t extends: ', np.min(t), np.max(t))
+        t = events["time"].numpy()
+        print("t extends: ", np.min(t), np.max(t))
         frame = as_frame(
             coords=coords,
             # time=events['time'],
-            polarity=events['polarity'].numpy(),
+            polarity=events["polarity"].numpy(),
         )
         plt.imshow(frame)
         plt.show()

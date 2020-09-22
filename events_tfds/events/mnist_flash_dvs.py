@@ -1,8 +1,5 @@
-import os
-import numpy as np
 import tensorflow as tf
 import tensorflow_datasets as tfds
-from events_tfds.data_io import dvs
 
 CITATION = """\
 @article{chang128,
@@ -10,7 +7,7 @@ CITATION = """\
   author={Chang, MF and Shen, SJ and Liu, CC and Wu, CW and Lin, YF and King, YC and Lin, CJ and Liao, HJ and Chih, YD and Yamauchi, H}
 }"""
 
-HOMEPAGE = 'http://www2.imse-cnm.csic.es/caviar/MNISTDVS.html'
+HOMEPAGE = "http://www2.imse-cnm.csic.es/caviar/MNISTDVS.html"
 
 NUM_CLASSES = 10
 
@@ -23,23 +20,21 @@ class MnistFlashDVS(tfds.core.GeneratorBasedBuilder):
         return tfds.core.DatasetInfo(
             builder=self,
             description="DVS-events generated from MNIST handwritten digits.",
-            features=tfds.features.FeaturesDict({
-                "events":  # tfds.features.Sequence(
-                    tfds.features.FeaturesDict(
-                        dict(time=tfds.features.Tensor(shape=(None,),
-                                                       dtype=tf.int64),
-                             coords=tfds.features.Tensor(shape=(
-                                 None,
-                                 2,
-                             ),
-                                                         dtype=tf.int64),
-                             polarity=tfds.features.Tensor(shape=(None,),
-                                                           dtype=tf.bool))),
-                "label":
-                    tfds.features.ClassLabel(num_classes=NUM_CLASSES),
-                "example_id":
-                    tfds.features.Tensor(shape=(), dtype=tf.int64)
-            }),
+            features=tfds.features.FeaturesDict(
+                {
+                    "events": tfds.features.FeaturesDict(  # tfds.features.Sequence(
+                        dict(
+                            time=tfds.features.Tensor(shape=(None,), dtype=tf.int64),
+                            coords=tfds.features.Tensor(
+                                shape=(None, 2,), dtype=tf.int64,
+                            ),
+                            polarity=tfds.features.Tensor(shape=(None,), dtype=tf.bool),
+                        )
+                    ),
+                    "label": tfds.features.ClassLabel(num_classes=NUM_CLASSES),
+                    "example_id": tfds.features.Tensor(shape=(), dtype=tf.int64),
+                }
+            ),
             supervised_keys=("events", "label"),
             homepage=HOMEPAGE,
             citation=CITATION,
@@ -47,7 +42,7 @@ class MnistFlashDVS(tfds.core.GeneratorBasedBuilder):
 
     def _split_generators(self, dl_manager):
         """Returns SplitGenerators."""
-        raise Exception('TODO - issues using downloaded data at the moment...')
+        raise Exception("TODO - issues using downloaded data at the moment...")
 
         # url = ('http://www2.imse-cnm.csic.es/caviar/MNIST_FLASH_DVS/'
         #        'Recordings_aedat_zip/Recordings_aedat.zip.{:03d}')
@@ -70,7 +65,7 @@ class MnistFlashDVS(tfds.core.GeneratorBasedBuilder):
 
     def _generate_examples(self, folders, split):
         """Generate NMNIST examples as dicts."""
-        raise NotImplementedError('TODO')
+        raise NotImplementedError("TODO")
 
     #     for path, fobj in archive:
     #         if not path.endswith('.bin'):
@@ -87,7 +82,7 @@ class MnistFlashDVS(tfds.core.GeneratorBasedBuilder):
     #         yield example_id, features
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     # from events_tfds.vis.image import as_frames
     # from events_tfds.vis.anim import animate_frames
     # download_config = None

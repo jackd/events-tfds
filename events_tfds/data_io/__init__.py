@@ -1,9 +1,7 @@
-from events_tfds.data_io import aedat
-from events_tfds.data_io import dvs
-from events_tfds.data_io import neuro
+from events_tfds.data_io import aedat, dvs, neuro
 
 __all__ = [
-    'aedat',
-    'dvs',
-    'neuro',
+    "aedat",
+    "dvs",
+    "neuro",
 ]

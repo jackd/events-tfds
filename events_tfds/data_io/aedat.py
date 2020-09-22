@@ -1,5 +1,6 @@
-import numpy as np
 import os
+
+import numpy as np
 
 EVT_DVS = 0  # DVS event type
 EVT_APS = 1  # APS event
@@ -40,22 +41,20 @@ def skip_header(fp):
     return p
 
 
-def load_raw_events(fp,
-                    bytes_skip=0,
-                    bytes_trim=0,
-                    filter_dvs=False,
-                    times_first=False):
+def load_raw_events(
+    fp, bytes_skip=0, bytes_trim=0, filter_dvs=False, times_first=False
+):
     p = skip_header(fp)
     fp.seek(p + bytes_skip)
     data = fp.read()
     if bytes_trim > 0:
         data = data[:-bytes_trim]
-    data = np.fromstring(data, dtype='>u4')
+    data = np.fromstring(data, dtype=">u4")
     if len(data) % 2 != 0:
         print(data[:20:2])
-        print('---')
+        print("---")
         print(data[1:21:2])
-        raise ValueError('odd number of data elements')
+        raise ValueError("odd number of data elements")
     raw_addr = data[::2]
     timestamp = data[1::2]
     if times_first:
@@ -67,13 +66,15 @@ def load_raw_events(fp,
     return timestamp, raw_addr
 
 
-def parse_raw_address(addr,
-                      x_mask=x_mask,
-                      x_shift=x_shift,
-                      y_mask=y_mask,
-                      y_shift=y_shift,
-                      polarity_mask=polarity_mask,
-                      polarity_shift=polarity_shift):
+def parse_raw_address(
+    addr,
+    x_mask=x_mask,
+    x_shift=x_shift,
+    y_mask=y_mask,
+    y_shift=y_shift,
+    polarity_mask=polarity_mask,
+    polarity_shift=polarity_shift,
+):
     polarity = read_bits(addr, polarity_mask, polarity_shift).astype(np.bool)
     x = read_bits(addr, x_mask, x_shift)
     y = read_bits(addr, y_mask, y_shift)
@@ -81,12 +82,13 @@ def parse_raw_address(addr,
 
 
 def load_events(
-        fp,
-        filter_dvs=False,
-        # bytes_skip=0,
-        # bytes_trim=0,
-        # times_first=False,
-        **kwargs):
+    fp,
+    filter_dvs=False,
+    # bytes_skip=0,
+    # bytes_trim=0,
+    # times_first=False,
+    **kwargs
+):
     timestamp, addr = load_raw_events(
         fp,
         filter_dvs=filter_dvs,
@@ -98,13 +100,14 @@ def load_events(
     return timestamp, x, y, polarity
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     from events_tfds.utils import make_monotonic
-    folder = '/home/rslsync/Resilio Sync/RoShamBoNPP/recordings/aedat/'
+
+    folder = "/home/rslsync/Resilio Sync/RoShamBoNPP/recordings/aedat/"
     # filename = 'background_10.aedat'
-    filename = 'paper_tobi_front.aedat'
+    filename = "paper_tobi_front.aedat"
     path = os.path.join(folder, filename)
-    with open(path, 'rb') as fp:
+    with open(path, "rb") as fp:
         time, x, y, pol = load_events(fp)
     time = make_monotonic(time)
     time -= np.min(time)
@@ -112,6 +115,7 @@ if __name__ == '__main__':
     y -= np.min(y)
     from events_tfds.vis import image
     from events_tfds.vis import anim
+
     coords = np.stack((x, y), axis=-1)
     frames = image.as_frames(coords, time, pol, num_frames=100)
     anim.animate_frames(frames, 20)

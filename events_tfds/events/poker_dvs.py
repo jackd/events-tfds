@@ -1,7 +1,9 @@
 import os
+
 import numpy as np
 import tensorflow as tf
 import tensorflow_datasets as tfds
+
 from events_tfds.data_io import dvs
 
 CITATION = """\
@@ -10,14 +12,14 @@ CITATION = """\
   author={Chang, MF and Shen, SJ and Liu, CC and Wu, CW and Lin, YF and King, YC and Lin, CJ and Liao, HJ and Chih, YD and Yamauchi, H}
 }"""
 
-HOMEPAGE = 'http://www2.imse-cnm.csic.es/caviar/POKERDVS.html'
-DL_URL = 'http://www2.imse-cnm.csic.es/caviar/POKER_DVS/poker_dvs.tar.gz'
+HOMEPAGE = "http://www2.imse-cnm.csic.es/caviar/POKERDVS.html"
+DL_URL = "http://www2.imse-cnm.csic.es/caviar/POKER_DVS/poker_dvs.tar.gz"
 
 CLASSES = (
-    'spade',
-    'club',
-    'diamond',
-    'heart',
+    "spade",
+    "club",
+    "diamond",
+    "heart",
 )
 
 
@@ -29,25 +31,22 @@ class PokerDVS(tfds.core.GeneratorBasedBuilder):
         return tfds.core.DatasetInfo(
             builder=self,
             description="DVS-events generated from playing car symbols.",
-            features=tfds.features.FeaturesDict({
-                "events":  # tfds.features.Sequence(
-                    tfds.features.FeaturesDict(
-                        dict(time=tfds.features.Tensor(shape=(None,),
-                                                       dtype=tf.int64),
-                             coords=tfds.features.Tensor(shape=(
-                                 None,
-                                 2,
-                             ),
-                                                         dtype=tf.int64),
-                             polarity=tfds.features.Tensor(shape=(None,),
-                                                           dtype=tf.bool))),
-                "label":
-                    tfds.features.ClassLabel(names=CLASSES),
-                "example_id":
-                    tfds.features.Tensor(shape=(), dtype=tf.int64),
-                "inverted":
-                    tfds.features.Tensor(shape=(), dtype=tf.bool),
-            }),
+            features=tfds.features.FeaturesDict(
+                {
+                    "events": tfds.features.FeaturesDict(  # tfds.features.Sequence(
+                        dict(
+                            time=tfds.features.Tensor(shape=(None,), dtype=tf.int64),
+                            coords=tfds.features.Tensor(
+                                shape=(None, 2,), dtype=tf.int64,
+                            ),
+                            polarity=tfds.features.Tensor(shape=(None,), dtype=tf.bool),
+                        )
+                    ),
+                    "label": tfds.features.ClassLabel(names=CLASSES),
+                    "example_id": tfds.features.Tensor(shape=(), dtype=tf.int64),
+                    "inverted": tfds.features.Tensor(shape=(), dtype=tf.bool),
+                }
+            ),
             supervised_keys=("events", "label"),
             homepage=HOMEPAGE,
             citation=CITATION,
@@ -58,33 +57,38 @@ class PokerDVS(tfds.core.GeneratorBasedBuilder):
         folder = dl_manager.download_and_extract(DL_URL)
 
         return [
-            tfds.core.SplitGenerator(name=tfds.Split.TRAIN,
-                                     gen_kwargs=dict(folder=folder)),
+            tfds.core.SplitGenerator(
+                name=tfds.Split.TRAIN, gen_kwargs=dict(folder=folder)
+            ),
         ]
 
     def _generate_examples(self, folder):
         """Generate NMNIST examples as dicts."""
         for filename in os.listdir(folder):
-            assert (filename.endswith('.aedat'))
+            assert filename.endswith(".aedat")
             head = filename[1:-6]
-            inverted = head[-1] == 'i'
+            inverted = head[-1] == "i"
             if inverted:
                 head = head[:-1]
             example_id = int(head[-2:])
             label = head[:-2]
-            with open(os.path.join(folder, filename), 'rb') as fp:
+            with open(os.path.join(folder, filename), "rb") as fp:
                 time, x, y, polarity = dvs.load_events(fp)
                 coords = np.stack((x, y), axis=-1)
-            features = dict(events=dict(time=time.astype(np.int64),
-                                        coords=coords.astype(np.int64),
-                                        polarity=polarity),
-                            label=label,
-                            example_id=example_id,
-                            inverted=inverted)
+            features = dict(
+                events=dict(
+                    time=time.astype(np.int64),
+                    coords=coords.astype(np.int64),
+                    polarity=polarity,
+                ),
+                label=label,
+                example_id=example_id,
+                inverted=inverted,
+            )
             yield (label, example_id), features
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     download_config = None
     # download_config = tfds.core.download.DownloadConfig(
     #     register_checksums=True)
@@ -93,10 +97,7 @@ if __name__ == '__main__':
     from events_tfds.vis.image import as_frames
     from events_tfds.vis.anim import animate_frames
 
-    for events, labels in tfds.load('poker_dvs',
-                                    split='train',
-                                    as_supervised=True):
-        frames = as_frames(**{k: v.numpy() for k, v in events.items()},
-                           num_frames=20)
+    for events, labels in tfds.load("poker_dvs", split="train", as_supervised=True):
+        frames = as_frames(**{k: v.numpy() for k, v in events.items()}, num_frames=20)
         print(labels.numpy())
         animate_frames(frames, fps=4)

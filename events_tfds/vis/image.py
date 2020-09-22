@@ -5,15 +5,17 @@ GREEN = np.array(((0, 255, 0)), dtype=np.uint8)
 WHITE = np.array(((255, 255, 255)), dtype=np.uint8)
 
 
-def as_frames(coords,
-              time,
-              polarity=None,
-              dt=None,
-              num_frames=None,
-              shape=None,
-              flip_up_down=False):
+def as_frames(
+    coords,
+    time,
+    polarity=None,
+    dt=None,
+    num_frames=None,
+    shape=None,
+    flip_up_down=False,
+):
     if time.size == 0:
-        raise ValueError('time must not be empty')
+        raise ValueError("time must not be empty")
     t_start = time[0]
     t_end = time[-1]
     if dt is None:

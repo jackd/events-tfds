@@ -1,5 +1,6 @@
-from events_tfds import Event
 import numpy as np
+
+from events_tfds import Event
 
 
 def load_neuro_events(fobj):
@@ -28,8 +29,7 @@ def load_neuro_events(fobj):
     x = raw_data[::5]
     y = raw_data[1::5]
     polarity = ((raw_data[2::5] & 128) >> 7).astype(np.bool)
-    time = (
-        (raw_data[2::5] & 127) << 16) | (raw_data[3::5] << 8) | (raw_data[4::5])
+    time = ((raw_data[2::5] & 127) << 16) | (raw_data[3::5] << 8) | (raw_data[4::5])
 
     valid = y != 240
 

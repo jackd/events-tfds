@@ -1,6 +1,8 @@
 import os
+
 import tensorflow as tf
 import tensorflow_datasets as tfds
+
 from events_tfds.data_io.neuro import load_neuro_events
 
 CITATION = """\
@@ -14,8 +16,8 @@ CITATION = """\
   publisher={Frontiers}
 }"""
 
-HOMEPAGE = 'https://www.garrickorchard.com/datasets/n-mnist'
-DL_URL = 'https://www.dropbox.com/sh/tg2ljlbmtzygrag/AABrCc6FewNZSNsoObWJqY74a?dl=1'
+HOMEPAGE = "https://www.garrickorchard.com/datasets/n-mnist"
+DL_URL = "https://www.dropbox.com/sh/tg2ljlbmtzygrag/AABrCc6FewNZSNsoObWJqY74a?dl=1"
 NUM_CLASSES = 10
 
 GRID_SHAPE = (34, 34)
@@ -28,25 +30,22 @@ class NMNIST(tfds.core.GeneratorBasedBuilder):
     def _info(self):
         return tfds.core.DatasetInfo(
             builder=self,
-            description=(
-                "Jitter-event conversion of MNIST handwritten digits."),
-            features=tfds.features.FeaturesDict({
-                "events":  # tfds.features.Sequence(
-                    tfds.features.FeaturesDict(
-                        dict(time=tfds.features.Tensor(shape=(None,),
-                                                       dtype=tf.int64),
-                             coords=tfds.features.Tensor(shape=(
-                                 None,
-                                 2,
-                             ),
-                                                         dtype=tf.int64),
-                             polarity=tfds.features.Tensor(shape=(None,),
-                                                           dtype=tf.bool))),
-                "label":
-                    tfds.features.ClassLabel(num_classes=NUM_CLASSES),
-                "example_id":
-                    tfds.features.Tensor(shape=(), dtype=tf.int64)
-            }),
+            description=("Jitter-event conversion of MNIST handwritten digits."),
+            features=tfds.features.FeaturesDict(
+                {
+                    "events": tfds.features.FeaturesDict(  # tfds.features.Sequence(
+                        dict(
+                            time=tfds.features.Tensor(shape=(None,), dtype=tf.int64),
+                            coords=tfds.features.Tensor(
+                                shape=(None, 2,), dtype=tf.int64,
+                            ),
+                            polarity=tfds.features.Tensor(shape=(None,), dtype=tf.bool),
+                        )
+                    ),
+                    "label": tfds.features.ClassLabel(num_classes=NUM_CLASSES),
+                    "example_id": tfds.features.Tensor(shape=(), dtype=tf.int64),
+                }
+            ),
             supervised_keys=("events", "label"),
             homepage=HOMEPAGE,
             citation=CITATION,
@@ -62,31 +61,39 @@ class NMNIST(tfds.core.GeneratorBasedBuilder):
         return [
             tfds.core.SplitGenerator(
                 name=tfds.Split.TEST,
-                gen_kwargs=dict(archive=dl_manager.iter_archive(
-                    os.path.join(data_folder, 'Test.zip')))),
+                gen_kwargs=dict(
+                    archive=dl_manager.iter_archive(
+                        os.path.join(data_folder, "Test.zip")
+                    )
+                ),
+            ),
             tfds.core.SplitGenerator(
                 name=tfds.Split.TRAIN,
-                gen_kwargs=dict(archive=dl_manager.iter_archive(
-                    os.path.join(data_folder, 'Train.zip'))))
+                gen_kwargs=dict(
+                    archive=dl_manager.iter_archive(
+                        os.path.join(data_folder, "Train.zip")
+                    )
+                ),
+            ),
         ]
 
     def _generate_examples(self, archive):
         """Generate NMNIST examples as dicts."""
         for path, fobj in archive:
-            if not path.endswith('.bin'):
+            if not path.endswith(".bin"):
                 continue
-            _, label, filename = path.split('/')
+            _, label, filename = path.split("/")
             example_id = int(filename[:-4])
             time, coords, polarity = load_neuro_events(fobj)
-            features = dict(events=dict(time=time,
-                                        coords=coords,
-                                        polarity=polarity),
-                            label=int(label),
-                            example_id=example_id)
+            features = dict(
+                events=dict(time=time, coords=coords, polarity=polarity),
+                label=int(label),
+                example_id=example_id,
+            )
             yield example_id, features
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     download_config = None
     # download_config = tfds.core.download.DownloadConfig(
     #     register_checksums=True)
@@ -95,10 +102,9 @@ if __name__ == '__main__':
     from events_tfds.vis.image import as_frames
     from events_tfds.vis.anim import animate_frames
 
-    for events, labels in builder.as_dataset(split='train', as_supervised=True):
-        frames = as_frames(**{k: v.numpy() for k, v in events.items()},
-                           num_frames=20)
+    for events, labels in builder.as_dataset(split="train", as_supervised=True):
+        frames = as_frames(**{k: v.numpy() for k, v in events.items()}, num_frames=20)
         print(labels.numpy())
-        t = events['time'].numpy()
+        t = events["time"].numpy()
         print(t[-1] - t[0], len(t))
         animate_frames(frames, fps=4)
