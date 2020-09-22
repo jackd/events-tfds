@@ -40,7 +40,7 @@ assert (len(CLASSES) == NUM_CLASSES)
 
 class Cifar10DVS(tfds.core.GeneratorBasedBuilder):
 
-    VERSION = tfds.core.Version("0.0.1")
+    VERSION = tfds.core.Version("0.0.2")
 
     def _info(self):
         return tfds.core.DatasetInfo(
