@@ -1,6 +1,6 @@
 import numpy as np
 
-from events_tfds import Event
+from events_tfds.types import Event
 
 
 def load_neuro_events(fobj):
