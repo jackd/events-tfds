@@ -44,22 +44,16 @@ SAMPLES = ("a", "b")
 class NtidigitsConfig(tfds.core.BuilderConfig):
     def __init__(self, single=True):
         self._single = single
-        name = self.name
+        name = "single" if self.single else "multi"
         super(NtidigitsConfig, self).__init__(
             name=name,
             version=tfds.core.Version("0.0.1"),
-            description="neuro-morphic conversion of tigits spoken dataset ({})".format(
-                name
-            ),
+            description=f"neuro-morphic conversion of tigits spoken dataset ({name})",
         )
 
     @property
     def single(self):
         return self._single
-
-    @property
-    def name(self):
-        return "single" if self.single else "multi"
 
 
 SINGLE_CONFIG = NtidigitsConfig(single=True)
