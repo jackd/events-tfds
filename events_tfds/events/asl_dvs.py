@@ -128,6 +128,7 @@ class AslDvs(tfds.core.GeneratorBasedBuilder):
 
 
 if __name__ == "__main__":
+    save_path = "/tmp/asl-dvs.gif"
     # from scipy.io import loadmat
     # path = '/home/jackd/Downloads/y_4200.mat'
     # loadmat(path)
@@ -149,4 +150,7 @@ if __name__ == "__main__":
         t = events["time"].numpy()
         print(f"{t.size} events over dt = {t[-1] - t[0]}")
         print(f"class = {CLASSES[labels.numpy()]}")
-        animate_frames(frames, fps=8)
+        animate_frames(frames, fps=8, save_path=save_path)
+        if save_path is not None:
+            print(f"Animation saved to {save_path}")
+            break
