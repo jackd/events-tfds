@@ -13,15 +13,18 @@ def as_frames(
     num_frames=None,
     shape=None,
     flip_up_down=False,
+    clip_head: bool = True,
 ):
     if time.size == 0:
         raise ValueError("time must not be empty")
-    t_start = time[0]
+    if clip_head:
+        time = time - time[0]
     t_end = time[-1]
+    assert t_end > 0, time
     if dt is None:
-        dt = int((t_end - t_start) // (num_frames - 1))
+        dt = t_end / (num_frames - 1)
     else:
-        num_frames = (t_end - t_start) // dt + 1
+        num_frames = int(t_end / dt) + 1
 
     if shape is None:
         shape = np.max(coords, axis=0)[-1::-1] + 1
@@ -32,12 +35,20 @@ def as_frames(
         colors = WHITE
     else:
         colors = np.where(polarity[:, np.newaxis], RED, GREEN)
-    i = np.minimum((time - t_start) // dt, num_frames - 1)
+    i = np.minimum(time / dt, num_frames - 1).astype(np.int64)
     # fi = np.concatenate((i[:, np.newaxis], coords), axis=-1)
     x, y = coords.T
     if flip_up_down:
         y = shape[0] - y - 1
     # frame_data[(i, shape[0] - y - 1, x)] = colors
+    assert np.all(i >= 0), (
+        i.min(),
+        time[-1],
+        time[-1] / dt,
+        np.array(time[-1] / dt, np.int64),
+    )
+    assert np.all(y >= 0), y.min()
+    assert np.all(x >= 0), x.min()
     frame_data[(i, y, x)] = colors
 
     return frame_data

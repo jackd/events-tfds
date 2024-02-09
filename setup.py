@@ -1,9 +1,12 @@
 from setuptools import find_packages, setup
 
-with open("requirements.txt") as fp:
+with open("requirements.txt", encoding="utf-8") as fp:
     install_requires = fp.read().split("\n")
 
-DATASET_FILES = ["url_checksums/*", "events/caltech101_labels.txt"]
+DATASET_FILES = [
+    "events/ncaltech101/caltech101_labels.txt",
+    "**/checksums.tsv",
+]
 
 setup(
     name="events-tfds",
@@ -16,6 +19,5 @@ setup(
     packages=find_packages(),
     requirements=install_requires,
     include_package_data=True,
-    package_data={"events_tfds": DATASET_FILES}
-    # zip_safe=False
+    package_data={"events_tfds": DATASET_FILES},
 )

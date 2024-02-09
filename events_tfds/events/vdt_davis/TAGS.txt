@@ -1,0 +1,4 @@
+content.data-type.video # Contains video data.
+content.data-type.time-series # Contains time-series data.
+content.data-type.tracking # Contains tracking data.
+content.data-type.trajectory # Contains trajectory data.

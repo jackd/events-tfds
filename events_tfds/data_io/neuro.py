@@ -28,7 +28,7 @@ def load_neuro_events(fobj):
     raw_data = raw_data.astype(np.uint32)
     x = raw_data[::5]
     y = raw_data[1::5]
-    polarity = ((raw_data[2::5] & 128) >> 7).astype(np.bool)
+    polarity = ((raw_data[2::5] & 128) >> 7).astype(bool)
     time = ((raw_data[2::5] & 127) << 16) | (raw_data[3::5] << 8) | (raw_data[4::5])
 
     valid = y != 240

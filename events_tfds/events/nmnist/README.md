@@ -1,0 +1,3 @@
+# Neuromorphic MNIST
+
+The Neuromorphic-MNIST (N-MNIST) dataset is a spiking version of the original frame-based MNIST dataset. It consists of the same 60,000 training and 10,000 testing samples as the original MNIST dataset, and is captured at the same visual scale as the original MNIST dataset (28x28 pixels). The N-MNIST dataset was captured by mounting the ATIS sensor on a motorized pan-tilt unit and having the sensor move while it views MNIST examples on an LCD monitor as shown in this video. A full description of the dataset and how it was created can be found in the paper below. Please cite this paper if you make use of the dataset.

@@ -1,20 +1,30 @@
-import matplotlib.animation as animation
+import typing as tp
+
 import matplotlib.pyplot as plt
+import numpy as np
+from matplotlib import animation
 
 
-def _save_or_show(anim, save_path):
+def _save_or_show(anim, save_path: str):
     if save_path is None:
         plt.show()
     else:
         anim.save(save_path, writer="imagemagick")
 
 
-def animate_frames(img_data, fps=30, save_path=None, **fig_kwargs):
-
+def animate_frames(
+    img_data: np.ndarray,
+    fps: int = 30,
+    save_path: tp.Optional[str] = None,
+    **fig_kwargs
+):
+    """Animate `img_data` using matplotlib."""
     fig = plt.figure(**fig_kwargs)
+    fig.subplots_adjust(left=0, bottom=0, right=1, top=1, wspace=None, hspace=None)
+
     ax = plt.gca()
     ax.axis("off")
-    im = plt.imshow(img_data[0])
+    im = plt.imshow(img_data[0], aspect="auto")
 
     def animate(i):
         im.set_data(img_data[i])
@@ -34,8 +44,13 @@ def animate_frames(img_data, fps=30, save_path=None, **fig_kwargs):
 
 
 def animate_frames_multi(
-    *img_data, fps=30, save_path=None, ax_shape=None, **fig_kwargs
+    *img_data,
+    fps: int = 30,
+    save_path: tp.Optional[str] = None,
+    ax_shape: tp.Optional[tp.Tuple[int, int]] = None,
+    **fig_kwargs
 ):
+    """Animate multiple sets of `img_data` across subplots of the same figure."""
     if len(img_data) == 1:
         return animate_frames(img_data[0], fps=fps, save_path=save_path)
     if ax_shape is None:
@@ -48,7 +63,7 @@ def animate_frames_multi(
 
     def animate(i=0):
         out = []
-        for (im, img) in zip(ims, img_data):
+        for im, img in zip(ims, img_data):
             out.append(im.set_data(img[i]))
         return out
 

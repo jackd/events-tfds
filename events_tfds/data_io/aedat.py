@@ -51,9 +51,6 @@ def load_raw_events(
         data = data[:-bytes_trim]
     data = np.fromstring(data, dtype=">u4")
     if len(data) % 2 != 0:
-        print(data[:20:2])
-        print("---")
-        print(data[1:21:2])
         raise ValueError("odd number of data elements")
     raw_addr = data[::2]
     timestamp = data[1::2]
@@ -75,7 +72,7 @@ def parse_raw_address(
     polarity_mask=polarity_mask,
     polarity_shift=polarity_shift,
 ):
-    polarity = read_bits(addr, polarity_mask, polarity_shift).astype(np.bool)
+    polarity = read_bits(addr, polarity_mask, polarity_shift).astype(bool)
     x = read_bits(addr, x_mask, x_shift)
     y = read_bits(addr, y_mask, y_shift)
     return x, y, polarity

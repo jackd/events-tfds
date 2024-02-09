@@ -65,7 +65,7 @@ if __name__ == "__main__":
     x = x[cam_mask]
     y = y[cam_mask]
     timestamp = timestamp[cam_mask]
-    print("num_events: {}".format(timestamp.size))
+    print(f"num_events: {timestamp.size}")
 
     coords = np.stack((x, np.max(y) - y), axis=-1)
 

@@ -1,4 +1,4 @@
-# events-fds
+# events-tfds
 
 [tensorflow-datasets](https://github.com/tensorflow/datasets) implementations of event stream datasets, along with basic implementations.
 
@@ -14,22 +14,18 @@ pip install events-tfds
 
 ```python
 import tensorflow_datasets as tfds
+import events_tfds.events.nmnist  # pylint:disable=unused-import
 
-import events_tfds.events.cifar10_dvs  # pylint:disable=unused-import
-from events_tfds.vis.anim import animate_frames
-from events_tfds.vis.image import as_frames
-
-train_ds = tfds.load("cifar10_dvs", split="train", as_supervised=True)
-for events, labels in train_ds:
-    coords = events["coords"].numpy()
-    time = events["time"].numpy()
-    polarity = events["polarity"].numpy()
-    coords = coords[:, -1::-1]  # x-y flipped
-    frames = as_frames(coords=coords, time=time, polarity=polarity, num_frames=20)
-    animate_frames(frames, fps=4)
-
-
+dataset = tfds.load("nmnist", split="train", as_supervised=True)
+for event, label in dataset:
+    coords = event["coords"]
+    time = event["time"]
+    polarity = event["polarity"]
+    do_stuff_with(coords, time, polarity)
 ```
+
+See [examples](./examples) subdirectory for loading / visualisation scripts.
+
 
 ## Pre-commit
 
