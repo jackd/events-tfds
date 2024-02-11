@@ -1,6 +1,7 @@
 # pylint:disable=unused-import
 import events_tfds.events.cifar10_dvs
 import events_tfds.events.asl_dvs
+import events_tfds.events.dvs_gesture
 import events_tfds.events.mnist_dvs
 import events_tfds.events.nmnist
 import events_tfds.events.ncaltech101
